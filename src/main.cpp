@@ -1,16 +1,16 @@
 #include <iostream>
 #include "PointCloud.h"
+#include "Opengl_Render.h"
 
 int main()
 {
     char filename[100];
-    sprintf(filename, "../model/copyroom.ply");
+    sprintf(filename, "../model/copyroom_simple.ply");
 
-    VertsRGB* verts = new VertsRGB[3700000];
-    int3* faces = new int3[7300000];
-    int vert_num;
-    int face_num;
-    load_ply_model(filename, verts, faces, vert_num, face_num);
+    Opengl_Render *module_opgl_render = new Opengl_Render();
+
+    module_opgl_render->init(filename);
+    module_opgl_render->loop();
 
     return 0;
 }

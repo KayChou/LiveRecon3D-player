@@ -22,5 +22,5 @@ typedef struct int3
 typedef struct VertsRGB
 {
     float x, y, z;
-    uint8_t r, g, b;
+    float r, g, b;
 } VertsRGB;
