@@ -41,7 +41,7 @@ private:
     int face_num;
 
 public:
-    void init(char *bgr_model_filename);
+    void init();
     void loop();
     void destroy();
 

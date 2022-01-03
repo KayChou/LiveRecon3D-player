@@ -2,7 +2,7 @@
 #include <Windows.h>
 
 
-void Opengl_Render::init(char *bgr_model_filename)
+void Opengl_Render::init()
 {
     this->WIN_WIDTH = 1920;
     this->WIN_HEIGHT = 1080;
@@ -18,7 +18,8 @@ void Opengl_Render::init(char *bgr_model_filename)
 
     this->verts = new VertsRGB[3700000];
     this->faces = new int3[7300000];
-    load_ply_model(bgr_model_filename, this->verts, this->faces, this->vert_num, this->face_num);
+    // load_bgr_model((char*)"../model/copyroom_simple.ply", this->verts, this->faces, this->vert_num, this->face_num);
+    load_fgr_model((char*)"../model/fgr/mesh_121.ply", this->verts, this->faces, this->vert_num, this->face_num);
 }
 
 
