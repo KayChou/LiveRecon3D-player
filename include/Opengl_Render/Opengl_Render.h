@@ -21,6 +21,7 @@ private:
     
 public:
     opengl_mesh *bgr_model;
+    opengl_mesh *fgr_model;
 
 private:
     GLFWwindow* window;
@@ -35,10 +36,15 @@ private:
     Shader *shaderModel;
 
 private:
-    VertsRGB* verts;
-    int3 *faces;
-    int vert_num;
-    int face_num;
+    VertsRGB* verts_bgr;
+    VertsRGB* verts_fgr;
+    int3 *faces_bgr;
+    int3* faces_fgr;
+    int vert_num_bgr, vert_num_fgr;
+    int face_num_bgr, face_num_fgr;
+
+private:
+    int frame_cnt;
 
 public:
     void init();

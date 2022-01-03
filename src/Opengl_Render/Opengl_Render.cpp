@@ -6,6 +6,7 @@ void Opengl_Render::init()
 {
     this->WIN_WIDTH = 1920;
     this->WIN_HEIGHT = 1080;
+    this->frame_cnt = 0;
 
     this->cameraTar = glm::vec3(-0.100000, 0.100000, -0.200000);
     this->cameraPos = glm::vec3(-4.787254, -2.590959, 2.571197);
@@ -16,10 +17,18 @@ void Opengl_Render::init()
     this->deltaTime = 0.0f;	// time between current frame and last frame
     this->lastFrame = 0.0f;
 
-    this->verts = new VertsRGB[3700000];
-    this->faces = new int3[7300000];
-    // load_bgr_model((char*)"../model/copyroom_simple.ply", this->verts, this->faces, this->vert_num, this->face_num);
-    load_fgr_model((char*)"../model/fgr/mesh_121.ply", this->verts, this->faces, this->vert_num, this->face_num);
+    this->verts_bgr = new VertsRGB[3700000];
+    this->verts_fgr = new VertsRGB[3700000];
+    this->faces_bgr = new int3[7300000];
+    this->faces_fgr = new int3[7300000];
+    load_bgr_model((char*)"../model/bgr/copyroom_simple.ply", this->verts_bgr, 
+                                                              this->faces_bgr, 
+                                                              this->vert_num_bgr, 
+                                                              this->face_num_bgr);
+    load_fgr_model((char*)"../model/fgr/mesh_0.ply", this->verts_fgr, 
+                                                     this->faces_fgr, 
+                                                     this->vert_num_fgr, 
+                                                     this->face_num_fgr);
 }
 
 
@@ -27,18 +36,27 @@ void Opengl_Render::loop()
 {
     glInit();
 
+    char filename[100];
+
     while(!glfwWindowShouldClose(window)) {
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
         processInput();
+        sprintf(filename, "../model/fgr/mesh_%d.ply", frame_cnt);
+        load_fgr_model(filename, this->verts_fgr, 
+                                 this->faces_fgr, 
+                                 this->vert_num_fgr, 
+                                 this->face_num_fgr);
+
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        bgr_model->set_data((float*)this->verts, (int*)this->faces, this->vert_num, this->face_num);
+        bgr_model->set_data((float*)this->verts_bgr, (int*)this->faces_bgr, this->vert_num_bgr, this->face_num_bgr);
+        fgr_model->set_data((float*)this->verts_fgr, (int*)this->faces_fgr, this->vert_num_fgr, this->face_num_fgr);
 
         shaderModel->use();
         // pass projection matrix to shader (note that in this case it could change every frame)
@@ -51,10 +69,12 @@ void Opengl_Render::loop()
         shaderModel->setMat4("model", glm::mat4(1.0f));
 
         bgr_model->draw();
+        fgr_model->draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
+        frame_cnt = (frame_cnt + 1) % 300;
         Sleep(50);
     }
     // glfw: terminate, clearing all previously allocated GLFW resources.
@@ -64,8 +84,12 @@ void Opengl_Render::loop()
 
 void Opengl_Render::destroy()
 {
-    delete [] this->verts;
-    delete [] this->faces;
+    delete [] this->verts_bgr;
+    delete [] this->verts_fgr;
+    delete [] this->faces_bgr;
+    delete [] this->faces_fgr;
+    delete bgr_model;
+    delete fgr_model;
     delete shaderModel;
     delete bgr_model;
 }
@@ -95,6 +119,7 @@ void Opengl_Render::glInit()
 
     shaderModel = new Shader("../include/Opengl_Render/vertexShader.vert", "../include/Opengl_Render/fragShader.frag");
     bgr_model = new opengl_mesh();
+    fgr_model = new opengl_mesh();
 }
 
 // ================================================================================
