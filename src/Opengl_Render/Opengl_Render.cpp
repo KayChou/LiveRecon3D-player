@@ -8,9 +8,9 @@ void Opengl_Render::init()
     this->WIN_HEIGHT = 1080;
     this->frame_cnt = 0;
 
-    this->cameraTar = glm::vec3(-0.100000, 0.100000, -0.200000);
-    this->cameraPos = glm::vec3(-4.787254, -2.590959, 2.571197);
-    this->cameraUp = glm::vec3(0.036480, -0.747074, -0.663739);
+    this->cameraTar = glm::vec3(-0.700000, -0.200000, -0.600000);
+    this->cameraPos = glm::vec3(-0.803034, -0.340658, -2.012135);
+    this->cameraUp = glm::vec3(-0.046714, -0.993648, 0.102383);
     this->fov =  45.0f;
 
     // timing
@@ -21,7 +21,7 @@ void Opengl_Render::init()
     this->verts_fgr = new VertsRGB[3700000];
     this->faces_bgr = new int3[7300000];
     this->faces_fgr = new int3[7300000];
-    load_bgr_model((char*)"../model/bgr/copyroom_simple.ply", this->verts_bgr, 
+    load_bgr_model((char*)"../model/bgr/copyroom_simple_align.ply", this->verts_bgr, 
                                                               this->faces_bgr, 
                                                               this->vert_num_bgr, 
                                                               this->face_num_bgr);
@@ -45,10 +45,10 @@ void Opengl_Render::loop()
 
         processInput();
         sprintf(filename, "../model/fgr/mesh_%d.ply", frame_cnt);
-        load_fgr_model(filename, this->verts_fgr, 
-                                 this->faces_fgr, 
-                                 this->vert_num_fgr, 
-                                 this->face_num_fgr);
+        // load_fgr_model(filename, this->verts_fgr, 
+        //                          this->faces_fgr, 
+        //                          this->vert_num_fgr, 
+        //                          this->face_num_fgr);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glEnable(GL_DEPTH_TEST);
@@ -61,10 +61,8 @@ void Opengl_Render::loop()
         shaderModel->use();
         // pass projection matrix to shader (note that in this case it could change every frame)
         glm::mat4 projection = glm::perspective(glm::radians(fov), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 view = glm::lookAt(cameraPos, cameraTar, cameraUp); // camera/view transformation
         shaderModel->setMat4("projection", projection);
-
-        // camera/view transformation
-        glm::mat4 view = glm::lookAt(cameraPos, cameraTar, cameraUp);
         shaderModel->setMat4("view", view);
         shaderModel->setMat4("model", glm::mat4(1.0f));
 
@@ -75,7 +73,6 @@ void Opengl_Render::loop()
         glfwPollEvents();
 
         frame_cnt = (frame_cnt + 1) % 300;
-        Sleep(50);
     }
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
@@ -197,4 +194,3 @@ void Opengl_Render::framebuffer_size_callback(GLFWwindow* window, int width, int
 {
     glViewport(0, 0, width, height);
 }
-

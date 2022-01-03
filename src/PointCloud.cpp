@@ -27,7 +27,8 @@ void load_bgr_model(char* filename, VertsRGB* verts, int3* faces, int &v_num, in
     for(int i = 0; i < v_num; i++) {
         fscanf(fp, "%f %f %f\n", &verts[i].x, &verts[i].y, &verts[i].z);
         fscanf(fp, "%d %d %d %d\n", &r, &g, &b, &alpha);
-
+        
+        verts[i].z -= 2.9f;
         verts[i].r = (float)(r / 255.f);
         verts[i].g = (float)(g / 255.f);
         verts[i].b = (float)(b / 255.f);
@@ -70,9 +71,7 @@ void load_fgr_model(char* filename, VertsRGB* verts, int3* faces, int &v_num, in
         fscanf(fp, "%f %f %f\n", &verts[i].x, &verts[i].y, &verts[i].z);
         fscanf(fp, "%d %d %d\n", &r, &g, &b);
 
-        verts[i].x /= 1000;
-        verts[i].y /= 1000;
-        verts[i].z /= 1000;
+        verts[i].z -= 2.9f;
         verts[i].r = (float)(r / 255.f);
         verts[i].g = (float)(g / 255.f);
         verts[i].b = (float)(b / 255.f);
