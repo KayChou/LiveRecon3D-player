@@ -37,18 +37,7 @@ void Opengl_Render::loop()
         glClear(GL_DEPTH_BUFFER_BIT);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, 6 * 4 * this->vert_num, verts, GL_DYNAMIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 4 * this->face_num, faces, GL_DYNAMIC_DRAW);
-
-        // configure vertex attribute: position and color
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
+        bgr_model->set_data((float*)this->verts, (int*)this->faces, this->vert_num, this->face_num);
 
         shaderModel->use();
         // pass projection matrix to shader (note that in this case it could change every frame)
@@ -60,23 +49,24 @@ void Opengl_Render::loop()
         shaderModel->setMat4("view", view);
         shaderModel->setMat4("model", glm::mat4(1.0f));
 
-        glBindVertexArray(VAO);
-        glPointSize(2.5);
-        glDrawArrays(GL_POINTS, 0, this->vert_num);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glDrawElements(GL_TRIANGLES, 3 * this->face_num, GL_UNSIGNED_INT, 0);
+        bgr_model->draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
         Sleep(50);
     }
-
-    delete [] this->verts;
-    delete [] this->faces;
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
+}
+
+
+void Opengl_Render::destroy()
+{
+    delete [] this->verts;
+    delete [] this->faces;
+    delete shaderModel;
+    delete bgr_model;
 }
 
 
@@ -103,11 +93,7 @@ void Opengl_Render::glInit()
     }
 
     shaderModel = new Shader("../include/Opengl_Render/vertexShader.vert", "../include/Opengl_Render/fragShader.frag");
-
-    // create VAO and VBO, bind VAO first, then bind and set vertex buffer
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    bgr_model = new opengl_mesh();
 }
 
 // ================================================================================

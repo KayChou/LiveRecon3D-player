@@ -11,6 +11,7 @@ int main()
 
     module_opgl_render->init(filename);
     module_opgl_render->loop();
+    module_opgl_render->destroy();
 
     return 0;
 }

@@ -10,6 +10,7 @@
 
 #include "shader.h"
 #include "PointCloud.h"
+#include "opengl_mesh.h"
 
 
 class Opengl_Render
@@ -17,9 +18,9 @@ class Opengl_Render
 private:
     unsigned int WIN_WIDTH;
     unsigned int WIN_HEIGHT;
-    unsigned int VBO;
-    unsigned int VAO;
-    unsigned int EBO;
+    
+public:
+    opengl_mesh *bgr_model;
 
 private:
     GLFWwindow* window;
@@ -42,6 +43,7 @@ private:
 public:
     void init(char *bgr_model_filename);
     void loop();
+    void destroy();
 
     void processInput();
     void glInit();
