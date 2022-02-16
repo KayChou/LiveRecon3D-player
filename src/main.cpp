@@ -10,5 +10,6 @@ int main()
     module_opgl_render->loop();
     module_opgl_render->destroy();
 
+    delete module_opgl_render;
     return 0;
 }

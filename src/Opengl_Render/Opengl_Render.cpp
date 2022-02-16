@@ -21,14 +21,10 @@ void Opengl_Render::init()
     this->verts_fgr = new VertsRGB[3700000];
     this->faces_bgr = new int3[7300000];
     this->faces_fgr = new int3[7300000];
-    load_bgr_model((char*)"../model/bgr/copyroom_simple_align.ply", this->verts_bgr, 
+    load_bgr_model((char*)"../model/bgr/copyroom_bgr_release.ply", this->verts_bgr, 
                                                               this->faces_bgr, 
                                                               this->vert_num_bgr, 
                                                               this->face_num_bgr);
-    load_fgr_model((char*)"../model/fgr/mesh_0.ply", this->verts_fgr, 
-                                                     this->faces_fgr, 
-                                                     this->vert_num_fgr, 
-                                                     this->face_num_fgr);
 }
 
 
@@ -44,11 +40,12 @@ void Opengl_Render::loop()
         lastFrame = currentFrame;
 
         processInput();
-        sprintf(filename, "../model/fgr/mesh_%d.ply", frame_cnt);
-        // load_fgr_model(filename, this->verts_fgr, 
-        //                          this->faces_fgr, 
-        //                          this->vert_num_fgr, 
-        //                          this->face_num_fgr);
+        sprintf(filename, "../model/fgr/mesh_%d.bin", this->frame_cnt);
+        load_fgr_model(filename, this->verts_fgr, 
+                                 this->faces_fgr, 
+                                 this->vert_num_fgr, 
+                                 this->face_num_fgr, true);
+        printf("frame: %d | verts: %d | faces: %d\n", this->frame_cnt, this->vert_num_fgr, this->face_num_fgr);
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glEnable(GL_DEPTH_TEST);
@@ -72,7 +69,7 @@ void Opengl_Render::loop()
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        frame_cnt = (frame_cnt + 1) % 300;
+        frame_cnt = (frame_cnt + 1) % 800;
     }
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
