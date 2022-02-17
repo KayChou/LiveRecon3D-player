@@ -24,3 +24,11 @@ typedef struct VertsRGB
     float x, y, z;
     float r, g, b;
 } VertsRGB;
+
+
+typedef struct ButtonStatus
+{
+    bool pause = false;
+    bool next_frame = false;
+    bool prev_frame = false;
+} ButtonStatus;

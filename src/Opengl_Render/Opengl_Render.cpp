@@ -40,14 +40,15 @@ void Opengl_Render::loop()
         lastFrame = currentFrame;
 
         processInput();
-        sprintf(filename, "../model/fgr/mesh_%d.bin", this->frame_cnt);
+        sprintf(filename, "%s/mesh_%d.bin", DATASET_PATH, this->frame_cnt);
         load_fgr_model(filename, this->verts_fgr, 
                                  this->faces_fgr, 
                                  this->vert_num_fgr, 
                                  this->face_num_fgr, true);
         printf("frame: %d | verts: %d | faces: %d\n", this->frame_cnt, this->vert_num_fgr, this->face_num_fgr);
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        // glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -63,13 +64,24 @@ void Opengl_Render::loop()
         shaderModel->setMat4("view", view);
         shaderModel->setMat4("model", glm::mat4(1.0f));
 
-        bgr_model->draw();
+        // bgr_model->draw();
         fgr_model->draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        frame_cnt = (frame_cnt + 1) % 800;
+        if(btn_status.pause == false) {
+            frame_cnt = (frame_cnt + 1) % FRAME_NUM;
+        }
+        if(btn_status.next_frame == true) {
+            frame_cnt = (frame_cnt + 1) % FRAME_NUM;
+            btn_status.next_frame = false;
+        }
+        if(btn_status.prev_frame == true) {
+            frame_cnt = (frame_cnt + FRAME_NUM - 1) % FRAME_NUM;
+            btn_status.prev_frame = false;
+        }
+        
     }
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
@@ -134,11 +146,11 @@ void Opengl_Render::processInput()
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         cameraPos -= cameraSpeed * glm::normalize(cameraTar - cameraPos);
     }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS | glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
         glm::vec3 temp = cameraPos + cameraSpeed * glm::normalize(glm::cross(cameraUp, cameraTar-cameraPos));
         cameraPos = cameraTar + glm::length(cameraPos - cameraTar) * glm::normalize(temp - cameraTar);
     }
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS | glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         glm::vec3 temp = cameraPos - cameraSpeed * glm::normalize(glm::cross(cameraUp, cameraTar-cameraPos));
         cameraPos = cameraTar + glm::length(cameraPos - cameraTar) * glm::normalize(temp - cameraTar);
     }
@@ -177,6 +189,16 @@ void Opengl_Render::processInput()
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){ // translate z -
         cameraPos -= glm::vec3(0.0f, 0.0f, translationSpeed);
         cameraTar -= glm::vec3(0.0f, 0.0f, translationSpeed);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){ // pause
+        btn_status.pause = !btn_status.pause;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){ // translate z -
+        btn_status.prev_frame = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){ // translate z -
+        btn_status.next_frame = true;
     }
     // std::cout << "Target: " << glm::to_string(cameraTar) << std::endl;
     // std::cout << "Position: " << glm::to_string(cameraPos) << std::endl;

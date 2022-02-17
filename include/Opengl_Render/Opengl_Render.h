@@ -45,6 +45,7 @@ private:
 
 private:
     int frame_cnt;
+    ButtonStatus btn_status;
 
 public:
     void init();
