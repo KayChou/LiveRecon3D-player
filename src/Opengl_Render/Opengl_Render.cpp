@@ -8,8 +8,8 @@ void Opengl_Render::init()
     this->WIN_HEIGHT = 1080;
     this->frame_cnt = 0;
 
-    this->cameraTar = glm::vec3(-0.700000, -0.200000, -0.600000);
-    this->cameraPos = glm::vec3(-0.803034, -0.340658, -2.012135);
+    this->cameraTar = glm::vec3(0.200000, -0.200000, 1.800000);
+    this->cameraPos = glm::vec3(0.602714, -0.365223, 0.380215);
     this->cameraUp = glm::vec3(-0.046714, -0.993648, 0.102383);
     this->fov =  45.0f;
 
@@ -64,7 +64,10 @@ void Opengl_Render::loop()
         shaderModel->setMat4("view", view);
         shaderModel->setMat4("model", glm::mat4(1.0f));
 
-        // bgr_model->draw();
+        if(btn_status.background == true) {
+            bgr_model->draw();
+        }
+        
         fgr_model->draw();
 
         glfwSwapBuffers(window);
@@ -193,12 +196,19 @@ void Opengl_Render::processInput()
 
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){ // pause
         btn_status.pause = !btn_status.pause;
+        Sleep(60);
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){ // translate z -
         btn_status.prev_frame = true;
+        Sleep(60);
     }
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){ // translate z -
         btn_status.next_frame = true;
+        Sleep(60);
+    }
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS){ // translate z -
+        btn_status.background = !btn_status.background;
+        Sleep(60);
     }
     // std::cout << "Target: " << glm::to_string(cameraTar) << std::endl;
     // std::cout << "Position: " << glm::to_string(cameraPos) << std::endl;

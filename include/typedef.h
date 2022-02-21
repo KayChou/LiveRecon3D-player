@@ -31,4 +31,5 @@ typedef struct ButtonStatus
     bool pause = false;
     bool next_frame = false;
     bool prev_frame = false;
+    bool background = false;
 } ButtonStatus;

@@ -31,8 +31,8 @@ void opengl_mesh::set_data(float* verts, int* faces, int v_num, int f_num)
 void opengl_mesh::draw()
 {
     glBindVertexArray(VAO);
-    glPointSize(2.5);
-    glDrawArrays(GL_POINTS, 0, this->v_num);
+    // glPointSize(1.5);
+    // glDrawArrays(GL_POINTS, 0, this->v_num);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glDrawElements(GL_TRIANGLES, 3 * this->f_num, GL_UNSIGNED_INT, 0);
