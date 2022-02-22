@@ -17,14 +17,15 @@ void Opengl_Render::init()
     this->deltaTime = 0.0f;	// time between current frame and last frame
     this->lastFrame = 0.0f;
 
-    this->verts_bgr = new VertsRGB[3700000];
+    this->verts_bgr = new VertsRGBUV[3700];
     this->verts_fgr = new VertsRGB[3700000];
     this->faces_bgr = new int3[7300000];
     this->faces_fgr = new int3[7300000];
-    load_bgr_model((char*)"../model/bgr/copyroom_bgr_release.ply", this->verts_bgr, 
-                                                              this->faces_bgr, 
-                                                              this->vert_num_bgr, 
-                                                              this->face_num_bgr);
+    load_bgr_model((char*)"../model/modular-environment/modular.ply",
+                        this->verts_bgr, 
+                        this->faces_bgr, 
+                        this->vert_num_bgr, 
+                        this->face_num_bgr);
 }
 
 
@@ -56,20 +57,26 @@ void Opengl_Render::loop()
         bgr_model->set_data((float*)this->verts_bgr, (int*)this->faces_bgr, this->vert_num_bgr, this->face_num_bgr);
         fgr_model->set_data((float*)this->verts_fgr, (int*)this->faces_fgr, this->vert_num_fgr, this->face_num_fgr);
 
-        shaderModel->use();
         // pass projection matrix to shader (note that in this case it could change every frame)
         glm::mat4 projection = glm::perspective(glm::radians(fov), (float)WIN_WIDTH / (float)WIN_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = glm::lookAt(cameraPos, cameraTar, cameraUp); // camera/view transformation
+
+        shaderModel->use();
         shaderModel->setMat4("projection", projection);
         shaderModel->setMat4("view", view);
         shaderModel->setMat4("model", glm::mat4(1.0f));
 
+        fgr_model->draw();
+
+        shaderBG->use();
+        shaderBG->setMat4("projection", projection);
+        shaderBG->setMat4("view", view);
+        shaderBG->setMat4("model", glm::mat4(1.0f));
+
         if(btn_status.background == true) {
             bgr_model->draw();
         }
-        
-        fgr_model->draw();
-
+    
         glfwSwapBuffers(window);
         glfwPollEvents();
 
@@ -100,6 +107,7 @@ void Opengl_Render::destroy()
     delete bgr_model;
     delete fgr_model;
     delete shaderModel;
+    delete shaderBG;
     delete bgr_model;
 }
 
@@ -127,8 +135,9 @@ void Opengl_Render::glInit()
     }
 
     shaderModel = new Shader("../include/Opengl_Render/vertexShader.vert", "../include/Opengl_Render/fragShader.frag");
-    bgr_model = new opengl_mesh();
-    fgr_model = new opengl_mesh();
+    shaderBG = new Shader("../include/Opengl_Render/vertexShader_bg.vert", "../include/Opengl_Render/fragShader_bg.frag");
+    bgr_model = new opengl_mesh(true);
+    fgr_model = new opengl_mesh(false);
 }
 
 // ================================================================================

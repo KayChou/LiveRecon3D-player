@@ -34,9 +34,10 @@ private:
     float lastFrame;
 
     Shader *shaderModel;
+    Shader *shaderBG;
 
 private:
-    VertsRGB* verts_bgr;
+    VertsRGBUV* verts_bgr;
     VertsRGB* verts_fgr;
     int3 *faces_bgr;
     int3* faces_fgr;
