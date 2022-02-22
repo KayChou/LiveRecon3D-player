@@ -8,6 +8,7 @@ opengl_mesh::opengl_mesh(bool has_texture)
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
+    glGenTextures(1, &texture);
     this->has_texture = has_texture;
 
     if(has_texture) {
@@ -47,7 +48,7 @@ void opengl_mesh::set_data(float* verts, int* faces, int v_num, int f_num)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(float) * f_num, faces, GL_DYNAMIC_DRAW);
 
         // load and create a texture
-        glGenTextures(1, &texture);
+        
         glBindTexture(GL_TEXTURE_2D, texture); 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -71,10 +72,11 @@ void opengl_mesh::set_data(float* verts, int* faces, int v_num, int f_num)
 
 void opengl_mesh::draw()
 {
+    glBindVertexArray(VAO);
+
     if(this->has_texture) {
         glBindTexture(GL_TEXTURE_2D, texture);
     }
-    glBindVertexArray(VAO);
     // glPointSize(1.5);
     // glDrawArrays(GL_POINTS, 0, this->v_num);
 

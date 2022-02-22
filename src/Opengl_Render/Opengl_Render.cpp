@@ -17,7 +17,7 @@ void Opengl_Render::init()
     this->deltaTime = 0.0f;	// time between current frame and last frame
     this->lastFrame = 0.0f;
 
-    this->verts_bgr = new VertsRGBUV[3700];
+    this->verts_bgr = new VertsRGBUV[370000];
     this->verts_fgr = new VertsRGB[3700000];
     this->faces_bgr = new int3[7300000];
     this->faces_fgr = new int3[7300000];
@@ -46,7 +46,7 @@ void Opengl_Render::loop()
                                  this->faces_fgr, 
                                  this->vert_num_fgr, 
                                  this->face_num_fgr, true);
-        printf("frame: %d | verts: %d | faces: %d\n", this->frame_cnt, this->vert_num_fgr, this->face_num_fgr);
+        // printf("frame: %d | verts: %d | faces: %d\n", this->frame_cnt, this->vert_num_fgr, this->face_num_fgr);
 
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         // glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -218,6 +218,10 @@ void Opengl_Render::processInput()
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS){ // translate z -
         btn_status.background = !btn_status.background;
         Sleep(60);
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        printf("save current frame to ply\n");
+        save_fgr_model((char *)"../model.ply", this->verts_fgr, this->faces_fgr, this->vert_num_fgr, this->face_num_fgr);
     }
     // std::cout << "Target: " << glm::to_string(cameraTar) << std::endl;
     // std::cout << "Position: " << glm::to_string(cameraPos) << std::endl;
