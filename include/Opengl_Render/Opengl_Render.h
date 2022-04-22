@@ -47,6 +47,9 @@ private:
 private:
     int frame_cnt;
     ButtonStatus btn_status;
+    bool auto_play = false;
+    int auto_play_cnt = 0;
+    bool auto_step_direction;
 
 public:
     void init();

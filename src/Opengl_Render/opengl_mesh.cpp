@@ -77,8 +77,8 @@ void opengl_mesh::draw()
     if(this->has_texture) {
         glBindTexture(GL_TEXTURE_2D, texture);
     }
-    // glPointSize(1.5);
-    // glDrawArrays(GL_POINTS, 0, this->v_num);
+    glPointSize(1.5);
+    glDrawArrays(GL_POINTS, 0, this->v_num);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glDrawElements(GL_TRIANGLES, 3 * this->f_num, GL_UNSIGNED_INT, 0);

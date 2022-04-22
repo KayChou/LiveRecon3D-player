@@ -9,8 +9,8 @@ void Opengl_Render::init()
     this->frame_cnt = 0;
 
     this->cameraTar = glm::vec3(0.200000, -0.200000, 1.800000);
-    this->cameraPos = glm::vec3(0.602714, -0.365223, 0.380215);
-    this->cameraUp = glm::vec3(-0.046714, -0.993648, 0.102383);
+    this->cameraPos = glm::vec3(-0.396558, 0.100904, -1.185037);
+    this->cameraUp = glm::vec3(0.018655, -0.994406, -0.103968);
     this->fov =  45.0f;
 
     // timing
@@ -26,6 +26,9 @@ void Opengl_Render::init()
                         this->faces_bgr, 
                         this->vert_num_bgr, 
                         this->face_num_bgr);
+    this->auto_play = false;
+    this->auto_play_cnt = 0;
+    this->auto_step_direction = true;
 }
 
 
@@ -39,6 +42,7 @@ void Opengl_Render::loop()
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        // printf("%f\n", deltaTime);
 
         processInput();
         sprintf(filename, "%s/mesh_%d.bin", DATASET_PATH, this->frame_cnt);
@@ -48,7 +52,7 @@ void Opengl_Render::loop()
                                  this->face_num_fgr, true);
         // printf("frame: %d | verts: %d | faces: %d\n", this->frame_cnt, this->vert_num_fgr, this->face_num_fgr);
 
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         // glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);
@@ -90,6 +94,10 @@ void Opengl_Render::loop()
         if(btn_status.prev_frame == true) {
             frame_cnt = (frame_cnt + FRAME_NUM - 1) % FRAME_NUM;
             btn_status.prev_frame = false;
+        }
+
+        if(deltaTime < 0.025) {
+            Sleep(25 - (int)(1000 * deltaTime));
         }
         
     }
@@ -222,6 +230,26 @@ void Opengl_Render::processInput()
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
         printf("save current frame to ply\n");
         save_fgr_model((char *)"../model.ply", this->verts_fgr, this->faces_fgr, this->vert_num_fgr, this->face_num_fgr);
+    }
+    if(this->auto_play) {
+        cameraSpeed = 1.0 * 0.016425;
+        if(this->auto_step_direction == true) {
+            this->auto_play_cnt++;
+            glm::vec3 temp = cameraPos - cameraSpeed * glm::normalize(glm::cross(cameraUp, cameraTar-cameraPos));
+            cameraPos = cameraTar + glm::length(cameraPos - cameraTar) * glm::normalize(temp - cameraTar);
+        }
+        else {
+            this->auto_play_cnt--;
+            glm::vec3 temp = cameraPos + cameraSpeed * glm::normalize(glm::cross(cameraUp, cameraTar-cameraPos));
+            cameraPos = cameraTar + glm::length(cameraPos - cameraTar) * glm::normalize(temp - cameraTar);
+        }
+
+        if(this->auto_play_cnt == 120) {
+            this->auto_step_direction = false;
+        }
+        if(this->auto_play_cnt == 0) {
+            this->auto_step_direction = true;
+        }
     }
     // std::cout << "Target: " << glm::to_string(cameraTar) << std::endl;
     // std::cout << "Position: " << glm::to_string(cameraPos) << std::endl;
